@@ -1,0 +1,77 @@
+global:
+  username: hcmus-polars
+  project_name: hcmus-shrec23-textANIMAR
+  name: point-cloud
+  save_dir: "./runs"
+  verbose: true
+  pretrained: null
+  resume: null
+  SEED: 1337
+dataset:
+  train:
+    params:
+      text_queries_path: "dataset/csv/TextQuery_Train.csv"
+      pc_ids_path: "dataset/csv/References.csv"
+      pc_dir: "dataset/PC_OBJ"
+      ground_truth_path: "dataset/csv/TextQuery_GT_Train_split.csv"
+  val:
+    params:
+      text_queries_path: "dataset/csv/TextQuery_Train.csv"
+      pc_ids_path: "dataset/csv/References.csv"
+      pc_dir: "dataset/PC_OBJ"
+      ground_truth_path: "dataset/csv/TextQuery_GT_Val_split.csv"
+data_loader:
+  train:
+    params:
+      batch_size: 16
+      num_workers: 2
+      shuffle: true
+  val:
+    params:
+      num_workers: 2
+      batch_size: 16
+model:
+  name: BaselineModel
+  embed_dim: 128
+  xbm:
+    enable_epoch: 1000000
+    memory_size: 1024
+  extractor:
+    pointcloud:
+      name: PointNetExtractor
+      params: {}
+    text:
+      name: LangExtractor
+      params:
+        pretrained: bert-base-uncased
+        freeze: True
+  encoder:
+    pointcloud:
+      num_hidden_layer: 1
+    text:
+      num_hidden_layer: 1
+trainer:
+  lr: 0.001
+  lr_scheduler:
+    params:
+      milestones:
+        - 120
+        - 250
+        - 350
+        - 500
+      gamma: 0.5
+  use_fp16: false
+  debug: false
+  num_epochs: 10000
+  clip_grad: 10.0
+  evaluate_interval: 1
+  log_interval: 1
+  save_interval: 1000
+callbacks:
+  - name: ModelCheckpoint
+    params:
+      filename: "baseline-{epoch}-{NN:.4f}-{mAP:.4f}-{train_loss:.4f}-{val_loss:.4f}"
+      monitor: "NN"
+      verbose: True
+      save_top_k: 3
+      mode: max

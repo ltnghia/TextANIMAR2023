@@ -1,0 +1,14 @@
+python-dotenv
+tqdm
+opencv-python
+pytorch-lightning==1.5.10
+tabulate
+wandb
+pandas
+numba
+efficientnet_pytorch
+timm
+faiss
+pytorch-metric-learning
+transformers
+pymeshlab

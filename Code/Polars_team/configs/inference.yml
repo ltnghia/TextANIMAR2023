@@ -1,0 +1,44 @@
+global:
+  username: hcmus-polars
+  project_name: hcmus-shrec23-textANIMAR
+  name: point-cloud
+  save_dir: "./runs"
+  SEED: 1337
+dataset:
+  point_cloud:
+    params:
+      pc_ids_path: "dataset/csv/ModelID.csv"
+      pc_dir: "dataset/PC_OBJ"
+  text:
+    params:
+      text_queries_path: "dataset/csv/TextQuery_Test.csv"
+data_loader:
+  point_cloud:
+    params:
+      batch_size: 16
+      num_workers: 2
+  text:
+    params:
+      batch_size: 16
+      num_workers: 2
+model:
+  name: "BaselineModel"
+  pretrained_ckpt: runs/hcmus-shrec23-textANIMAR/710vfu83/checkpoints/baseline-epoch=290-NN=0.9487-mAP=0.9537-train_loss=0.1843-val_loss=0.6994.ckpt
+  embed_dim: 128
+  xbm:
+    enable_epoch: 100000
+    memory_size: 1024
+  extractor:
+    pointcloud:
+      name: CurveNet
+      params: {}
+    text:
+      name: LangExtractor
+      params:
+        pretrained: bert-base-uncased
+        freeze: True
+  encoder:
+    pointcloud:
+      num_hidden_layer: 2
+    text:
+      num_hidden_layer: 2
